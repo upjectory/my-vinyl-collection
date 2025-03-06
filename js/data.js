@@ -11,7 +11,7 @@ async function fetchVinylData() {
     try {
         // REPLACE THIS URL WITH YOUR OWN PERSONAL VINYL COLLECTION GOOGLE SHEET
         // MAKE SURE TO GO FILE > SHARE > PUBLISH TO WEB > ENTIRE DOCUMENT & CSV
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQY3A57SUa4yjeK-Sto5JRK2krLUxwROG-Qd4EjDriAwlhaDYljdom9jrUqDKRUCpXiAmdLKmFqwHFa/pub?output=csv';
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVK11MkGU0tTDw3b_oRiEUnJPNdgNpBIqmCQEWX7ah_cAB55DuGur07Ptki5BPSNqoVXhzbeNha0k/pub?output=csv';
         
         // Fetch the CSV data
         const response = await fetch(sheetUrl);
