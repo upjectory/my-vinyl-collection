@@ -562,3 +562,60 @@ footer {
     0% { transform: translate(-50%, -50%) rotate(0deg); }
     100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
+
+/* Enhanced image loading states */
+.album-image {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    background-color: #121212; /* Dark background while loading */
+    will-change: transform, opacity; /* Optimize for animations */
+}
+
+.album-image.loading {
+    opacity: 0.7;
+    animation: pulse 1.5s infinite alternate;
+}
+
+.album-image.loaded {
+    opacity: 1;
+}
+
+.album-image.error {
+    opacity: 0.5;
+}
+
+/* Create a gentle loading pulse animation */
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    100% { opacity: 0.8; }
+}
+
+/* Optimize for mobile devices */
+@media (max-width: 768px) {
+    .album-image-container {
+        position: relative !important;
+        overflow: hidden !important;
+        width: 100% !important;
+        height: 0 !important;
+        padding-top: 100% !important; /* 1:1 Aspect Ratio */
+        padding-bottom: 0 !important;
+        background-color: #121212 !important;
+    }
+    
+    .album-card {
+        transition: transform 0.2s ease-in-out; /* Faster transitions on mobile */
+    }
+    
+    /* Optimized spinner for mobile */
+    .album-image-container::before {
+        width: 24px;
+        height: 24px;
+        border-width: 2px;
+    }
+}
