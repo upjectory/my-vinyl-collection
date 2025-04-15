@@ -26,6 +26,9 @@ function initStatsUI() {
     // Add event listeners for modal interaction
     setupEventListeners();
     
+    // Add enhanced styles
+    addEnhancedListeningTimeStyles();
+    
     // Mark as initialized
     statsUIInitialized = true;
     
@@ -147,8 +150,7 @@ function createStatsModal() {
                     <div class="stats-tabs">
                         <button class="stats-tab-btn active" data-tab="distribution">Distribution</button>
                         <button class="stats-tab-btn" data-tab="artists">Artists</button>
-                        <button class="stats-tab-btn" data-tab="timeline">Timeline</button>
-                        <button class="stats-tab-btn" data-tab="insights">Insights</button>
+                        <button class="stats-tab-btn" data-tab="timeline">Timeline & Insights</button>
                     </div>
                     
                     <!-- Tab content containers -->
@@ -191,7 +193,7 @@ function createStatsModal() {
                             </div>
                         </div>
                         
-                        <!-- Timeline tab -->
+                        <!-- Timeline & Insights tab (merged) -->
                         <div id="timeline-tab" class="stats-tab-pane">
                             <div class="stats-chart-container" id="years-distribution-container">
                                 <h3>Albums By Year</h3>
@@ -202,10 +204,7 @@ function createStatsModal() {
                                 <h3>Collection Timespan</h3>
                                 <div id="year-range" class="stats-text-content"></div>
                             </div>
-                        </div>
-                        
-                        <!-- Insights tab -->
-                        <div id="insights-tab" class="stats-tab-pane">
+                            
                             <div class="stats-text-container" id="listening-time-container">
                                 <h3>Listening Marathon</h3>
                                 <div id="listening-time" class="stats-text-content"></div>
@@ -214,11 +213,6 @@ function createStatsModal() {
                             <div class="stats-chart-container" id="favorites-genre-container">
                                 <h3>Favorites by Genre</h3>
                                 <div id="favorites-genre-chart" class="stats-chart"></div>
-                            </div>
-                            
-                            <div class="stats-chart-container" id="artwork-colors-container">
-                                <h3>Album Artwork Color Palette</h3>
-                                <div id="artwork-colors" class="stats-chart color-palette"></div>
                             </div>
                         </div>
                     </div>
@@ -441,8 +435,78 @@ function generateStatsContent(albums) {
     generateOverviewCards(stats);
     generateDistributionCharts(stats);
     generateArtistCharts(stats);
+    
+    // For the merged Timeline & Insights tab
     generateTimelineCharts(stats);
-    generateInsightsContent(stats);
+    generateListeningTimeInfo(stats.listeningTime);
+    generateFavoritesGenreChart(stats.favorites);
+    
+    // We're no longer generating the artwork color palette
+}
+
+/**
+ * Add CSS styles for the enhanced listening time section
+ */
+function addEnhancedListeningTimeStyles() {
+    // Check if styles are already added
+    if (document.getElementById('enhanced-listening-time-styles')) {
+        return;
+    }
+    
+    const styles = document.createElement('style');
+    styles.id = 'enhanced-listening-time-styles';
+    styles.textContent = `
+        .stats-fun-facts-title {
+            margin-top: 20px;
+            margin-bottom: 12px;
+            color: #6200ee;
+            font-size: 18px;
+        }
+        
+        .stats-fun-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .stats-fun-list li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .stats-fun-list li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .stats-fun-list svg {
+            margin-right: 8px;
+            flex-shrink: 0;
+            color: #6200ee;
+            margin-top: 2px;
+        }
+        
+        .stats-fun-list li span {
+            flex: 1;
+        }
+        
+        .stats-fun-list strong {
+            color: #6200ee;
+            padding: 0 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-fun-list li {
+                margin-bottom: 16px;
+            }
+        }
+    `;
+    
+    document.head.appendChild(styles);
 }
 
 /**
@@ -775,7 +839,7 @@ function generateInsightsContent(stats) {
 }
 
 /**
- * Generate the listening time information
+ * Generate the listening time information with enhanced content
  * @param {Object} listeningTime - The listening time statistics
  */
 function generateListeningTimeInfo(listeningTime) {
@@ -785,7 +849,16 @@ function generateListeningTimeInfo(listeningTime) {
     // Clear existing content
     container.innerHTML = '';
     
-    // Create content
+    // Calculate additional fun statistics
+    const albumsPerDay = Math.ceil(listeningTime.totalMinutes / 1440); // minutes in a day
+    const marathonDays = Math.ceil(listeningTime.hours / 8); // 8 listening hours per day
+    const roadTripDistance = Math.round(listeningTime.hours * 65); // avg 65 mph
+    const novelCount = Math.floor(listeningTime.hours / 5); // avg 5 hours per novel
+    
+    // Format the road trip percentage more reliably
+    const roadTripPercentage = Math.floor(2800/roadTripDistance*100);
+    
+    // Create content with enhanced information
     container.innerHTML = `
         <div class="stats-listening-time">
             <div class="listening-time-icon">
@@ -800,6 +873,41 @@ function generateListeningTimeInfo(listeningTime) {
                 <p class="listening-time-sub">That's approximately ${listeningTime.totalMinutes.toLocaleString()} minutes of music!</p>
             </div>
         </div>
+        
+        <h3 class="stats-fun-facts-title">Fun Facts About Your Collection</h3>
+        <ul class="stats-fun-list">
+            <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Listening to your collection 8 hours a day would take <strong>${marathonDays}</strong> days to complete.</span>
+            </li>
+            <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                    <line x1="6" y1="1" x2="6" y2="4"></line>
+                    <line x1="10" y1="1" x2="10" y2="4"></line>
+                    <line x1="14" y1="1" x2="14" y2="4"></line>
+                </svg>
+                <span>You could listen to <strong>${albumsPerDay}</strong> albums per day for a full day and not repeat any music.</span>
+            </li>
+            <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>A coast-to-coast road trip from NY to LA (~2,800 miles) would let you listen to about <strong>${roadTripPercentage}%</strong> of your collection.</span>
+            </li>
+            <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                <span>In the time it takes to listen to your entire collection, you could read <strong>${novelCount}</strong> novels (at 5 hours per book).</span>
+            </li>
+        </ul>
     `;
 }
 
