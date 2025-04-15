@@ -10,9 +10,14 @@
 <body>
     <header>
         <div class="container">
-            <h1 class="site-title">
-                My Vinyl Collection
-            </h1>
+            <div class="header-content">
+                <h1 class="site-title">
+                    My Vinyl Collection
+                </h1>
+                <div id="stats-button-placeholder" class="stats-button-container">
+                    <!-- Stats button will be inserted here by JavaScript -->
+                </div>
+            </div>
         </div>
     </header>
     
@@ -75,5 +80,25 @@
     <script src="js/data.js"></script>
     <script src="js/filters.js"></script>
     <script src="js/app.js"></script>
+    <!-- Collection Stats Feature -->
+    <script src="js/stats.js"></script>
+    <script src="js/stats-ui.js"></script>
+    <script src="js/stats-integration.js"></script>
+
+    <script>
+      // Call the initialization function directly
+      document.addEventListener('DOMContentLoaded', function() {
+        // Wait a short time to ensure all other modules are loaded
+        setTimeout(function() {
+          if (typeof initStatsUI === 'function') {
+            initStatsUI();
+          } else if (window.VinylStatsUI && typeof window.VinylStatsUI.initStatsUI === 'function') {
+            window.VinylStatsUI.initStatsUI();
+          } else {
+            console.error('Stats UI initialization function not found!');
+          }
+        }, 100);
+      });
+    </script>
 </body>
 </html>
