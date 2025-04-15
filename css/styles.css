@@ -619,3 +619,32 @@ footer {
         border-width: 2px;
     }
 }
+
+/* Header layout with stats button */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Ensure proper spacing for stats button */
+.stats-button-container {
+    margin-left: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .site-title {
+        font-size: 22px;
+        margin-right: 10px;
+    }
+    
+    .stats-button span {
+        display: none; /* Hide button text on small screens */
+    }
+}
